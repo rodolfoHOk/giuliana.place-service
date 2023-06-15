@@ -3,6 +3,7 @@ package br.com.hioktec.placeservice.domain.services;
 import br.com.hioktec.placeservice.domain.model.Place;
 import br.com.hioktec.placeservice.domain.repositories.PlaceRepository;
 import com.github.slugify.Slugify;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public class PlaceService {
@@ -19,6 +20,10 @@ public class PlaceService {
     var placeToSave = new Place(null, place.name(), slugify.slugify(place.name()), place.state(),
       place.createdAt(), place.updatedAt());
     return placeRepository.save(placeToSave);
+  }
+
+  public Flux<Place> list() {
+    return placeRepository.findAll();
   }
 
 }

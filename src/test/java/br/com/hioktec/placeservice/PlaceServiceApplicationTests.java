@@ -1,6 +1,7 @@
 package br.com.hioktec.placeservice;
 
 import br.com.hioktec.placeservice.api.PlaceRequest;
+import br.com.hioktec.placeservice.api.PlaceResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -44,6 +45,27 @@ class PlaceServiceApplicationTests {
 			.exchange()
 			.expectStatus().isBadRequest()
 		;
+	}
+
+	@Test
+	public void testListPlacesSuccess() {
+		seedOnePlace("place1", "state1");
+		seedOnePlace("place2", "state2");
+
+		webTestClient
+			.get()
+			.uri("/places")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBodyList(PlaceResponse.class).hasSize(2);
+	}
+
+	private void seedOnePlace(String name, String state) {
+		webTestClient
+			.post()
+			.uri("/places")
+			.bodyValue(new PlaceRequest(name, state))
+			.exchange();
 	}
 
 }
