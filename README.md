@@ -11,6 +11,7 @@
 - [Spring Webflux](https://docs.spring.io/spring-framework/reference/web/webflux.html)
 - [Spring Data + R2DBC](https://docs.spring.io/spring-framework/reference/data-access/r2dbc.html)
 - [Slugify](https://github.com/slugify/slugify)
+- Integration Tests
 
 ## How to run
 
@@ -46,21 +47,103 @@ API access URL: [localhost:8080](http://localhost:8080).
 
 ## API Endpoints
 
-Make HTTP request with [httpie](https://httpie.io) tool:
-
-- POST /places
+- POST http://localhost:8080/places
 ```
-http POST :8080/places name="Place" state="State"
-
-HTTP/1.1 200 OK
-Content-Length: 129
+POST http://localhost:8080/places
 Content-Type: application/json
 
 {
-    "createdAt": "2023-04-20T19:00:07.241632",
-    "name": "Place",
-    "slug": "place",
-    "state": "State",
-    "updatedAt": "2023-04-20T19:00:07.241632"
+  "name": "Place",
+  "city": "City",
+  "state": "State",
 }
+
+Response:
+
+HTTP/1.1 201 CREATED
+Content-Type: application/json
+
+{
+  "name": "Place",
+  "city": "City",
+  "state": "State",
+  "slug": "place",
+  "createdAt": "2023-04-20T19:00:07.241632",
+  "updatedAt": "2023-04-20T19:00:07.241632"
+}
+```
+
+- GET http://localhost:8080/places
+```
+GET http://localhost:8080/places
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+[
+  {
+    "name": "Place",
+    "city": "City",
+    "state": "State",
+    "slug": "place",
+    "createdAt": "2023-04-20T19:00:07.241632",
+    "updatedAt": "2023-04-20T19:00:07.241632"
+  }
+]
+```
+
+- GET http://localhost:8080/places/:id
+```
+GET http://localhost:8080/places/1
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "name": "Place",
+  "city": "City",
+  "state": "State",
+  "slug": "place",
+  "createdAt": "2023-04-20T19:00:07.241632",
+  "updatedAt": "2023-04-20T19:00:07.241632"
+}
+```
+
+- PUT http://localhost:8080/places/:id
+```
+PUT http://localhost:8080/places/1
+Content-Type: application/json
+
+{
+  "name": "Place Update",
+  "city": "City",
+  "state": "State",
+}
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "name": "Place Update",
+  "city": "City",
+  "state": "State",
+  "slug": "place-update",
+  "createdAt": "2023-04-20T19:00:07.241632",
+  "updatedAt": "2023-04-20T19:01:07.241632"
+}
+```
+
+- DELETE http://localhost:8080/places/:id
+```
+DELETE http://localhost:8080/places/1
+
+Response:
+
+HTTP/1.1 204 NO CONTENT
 ```
