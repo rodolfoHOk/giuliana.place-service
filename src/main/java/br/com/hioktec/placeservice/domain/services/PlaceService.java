@@ -20,7 +20,7 @@ public class PlaceService {
   }
 
   public Mono<Place> create(Place place) {
-    var placeToSave = new Place(null, place.name(), slugify.slugify(place.name()), place.state(),
+    var placeToSave = new Place(null, place.name(), slugify.slugify(place.name()), place.city(), place.state(),
       place.createdAt(), place.updatedAt());
     return placeRepository.save(placeToSave);
   }
@@ -35,8 +35,8 @@ public class PlaceService {
 
   public Mono<Place> update(Long id, Place place) {
     return placeRepository.findById(id)
-      .map(existPlace -> new Place(existPlace.id(), place.name(), slugify.slugify(place.name()), place.state(),
-        existPlace.createdAt(), LocalDateTime.now()))
+      .map(existPlace -> new Place(existPlace.id(), place.name(), slugify.slugify(place.name()), place.city(),
+        place.state(), existPlace.createdAt(), LocalDateTime.now()))
       .flatMap(placeRepository::save);
   }
 

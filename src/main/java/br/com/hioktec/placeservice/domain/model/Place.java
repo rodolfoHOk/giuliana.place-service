@@ -10,6 +10,7 @@ public record Place(
   @Id Long id,
   String name,
   String slug,
+  String city,
   String state,
   @CreatedDate LocalDateTime createdAt,
   @LastModifiedDate LocalDateTime updatedAt

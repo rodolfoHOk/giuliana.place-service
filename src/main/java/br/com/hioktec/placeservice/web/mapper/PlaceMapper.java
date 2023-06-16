@@ -7,11 +7,12 @@ import br.com.hioktec.placeservice.domain.model.Place;
 public class PlaceMapper {
 
   public static PlaceResponse fromDomainModelToResponse (Place place) {
-    return new PlaceResponse(place.name(), place.slug(), place.state(), place.createdAt(), place.updatedAt());
+    return new PlaceResponse(place.name(), place.slug(), place.city(), place.state(), place.createdAt(),
+      place.updatedAt());
   }
 
   public static Place fromRequestToDomainModel (PlaceRequest placeRequest) {
-    return new Place(null, placeRequest.name(), null, placeRequest.state(),
+    return new Place(null, placeRequest.name(), null, placeRequest.city(), placeRequest.state(),
       null, null);
   }
 

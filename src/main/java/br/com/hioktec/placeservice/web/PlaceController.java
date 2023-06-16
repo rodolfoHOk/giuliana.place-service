@@ -2,7 +2,6 @@ package br.com.hioktec.placeservice.web;
 
 import br.com.hioktec.placeservice.api.PlaceRequest;
 import br.com.hioktec.placeservice.api.PlaceResponse;
-import br.com.hioktec.placeservice.domain.exception.ResourceNotFoundException;
 import br.com.hioktec.placeservice.domain.services.PlaceService;
 import br.com.hioktec.placeservice.web.mapper.PlaceMapper;
 import jakarta.validation.Valid;

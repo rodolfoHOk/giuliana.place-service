@@ -21,12 +21,13 @@ class PlaceServiceApplicationTests {
 	@Order(1)
 	public void testCreatePlaceFailure() {
 		var name = "";
+		var city = "";
 		var state = "";
 
 		webTestClient
 			.post()
 			.uri("/places")
-			.bodyValue(new PlaceRequest(name, state))
+			.bodyValue(new PlaceRequest(name, city, state))
 			.exchange()
 			.expectStatus().isBadRequest();
 	}
@@ -35,17 +36,19 @@ class PlaceServiceApplicationTests {
 	@Order(2)
 	public void testCreatePlaceSuccess() {
 		var name = "Valid Name";
+		var city = "Valid City";
 		var state = "Valid State";
 		var expectedSlug = "valid-name";
 
 		webTestClient
 			.post()
 			.uri("/places")
-			.bodyValue(new PlaceRequest(name, state))
+			.bodyValue(new PlaceRequest(name, city, state))
 			.exchange()
 			.expectStatus().isCreated()
 			.expectBody()
 			.jsonPath("name").isEqualTo(name)
+			.jsonPath("city").isEqualTo(city)
 			.jsonPath("state").isEqualTo(state)
 			.jsonPath("slug").isEqualTo(expectedSlug)
 			.jsonPath("createdAt").isNotEmpty()
@@ -88,12 +91,13 @@ class PlaceServiceApplicationTests {
 	@Order(6)
 	public void testUpdatePlaceNotFound() {
 		var name = "Valid Name";
+		var city = "Valid City";
 		var state = "Valid State";
 
 		webTestClient
 			.put()
 			.uri("/places/10")
-			.bodyValue(new PlaceRequest(name, state))
+			.bodyValue(new PlaceRequest(name, city, state))
 			.exchange()
 			.expectStatus().isNotFound();
 	}
@@ -102,12 +106,13 @@ class PlaceServiceApplicationTests {
 	@Order(7)
 	public void testUpdatePlaceBaqRequest() {
 		var name = "";
+		var city = "";
 		var state = "";
 
 		webTestClient
 			.put()
 			.uri("/places/1")
-			.bodyValue(new PlaceRequest(name, state))
+			.bodyValue(new PlaceRequest(name, city, state))
 			.exchange()
 			.expectStatus().isBadRequest();
 	}
@@ -116,13 +121,14 @@ class PlaceServiceApplicationTests {
 	@Order(8)
 	public void testUpdatePlaceOk() {
 		var name = "Valid Name Update";
+		var city = "Valid City";
 		var state = "Valid State Update";
 		var expectedSlug = "valid-name-update";
 
 		webTestClient
 			.put()
 			.uri("/places/1")
-			.bodyValue(new PlaceRequest(name, state))
+			.bodyValue(new PlaceRequest(name, city, state))
 			.exchange()
 			.expectStatus().isOk()
 			.expectBody()
