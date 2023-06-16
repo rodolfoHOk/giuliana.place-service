@@ -2,18 +2,37 @@ package br.com.hioktec.placeservice;
 
 import br.com.hioktec.placeservice.api.PlaceRequest;
 import br.com.hioktec.placeservice.api.PlaceResponse;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class PlaceServiceApplicationTests {
 
 	@Autowired
 	WebTestClient webTestClient;
 
 	@Test
+	@Order(1)
+	public void testCreatePlaceFailure() {
+		var name = "";
+		var state = "";
+
+		webTestClient
+			.post()
+			.uri("/places")
+			.bodyValue(new PlaceRequest(name, state))
+			.exchange()
+			.expectStatus().isBadRequest();
+	}
+
+	@Test
+	@Order(2)
 	public void testCreatePlaceSuccess() {
 		var name = "Valid Name";
 		var state = "Valid State";
@@ -34,32 +53,18 @@ class PlaceServiceApplicationTests {
 	}
 
 	@Test
-	public void testCreatePlaceFailure() {
-		var name = "";
-		var state = "";
-
-		webTestClient
-			.post()
-			.uri("/places")
-			.bodyValue(new PlaceRequest(name, state))
-			.exchange()
-			.expectStatus().isBadRequest();
-	}
-
-	@Test
+	@Order(3)
 	public void testListPlacesSuccess() {
-		seedOnePlace("place1", "state1");
-		seedOnePlace("place2", "state2");
-
 		webTestClient
 			.get()
 			.uri("/places")
 			.exchange()
 			.expectStatus().isOk()
-			.expectBodyList(PlaceResponse.class).hasSize(2);
+			.expectBodyList(PlaceResponse.class).hasSize(1);
 	}
 
 	@Test
+	@Order(4)
 	public void testGetPlaceByIdNotFound() {
 		webTestClient
 			.get()
@@ -69,9 +74,8 @@ class PlaceServiceApplicationTests {
 	}
 
 	@Test
+	@Order(5)
 	public void testGetPlaceByIdOk() {
-		seedOnePlace("place1", "state1");
-
 		webTestClient
 			.get()
 			.uri("/places/1")
@@ -81,6 +85,7 @@ class PlaceServiceApplicationTests {
 	}
 
 	@Test
+	@Order(6)
 	public void testUpdatePlaceNotFound() {
 		var name = "Valid Name";
 		var state = "Valid State";
@@ -94,8 +99,8 @@ class PlaceServiceApplicationTests {
 	}
 
 	@Test
+	@Order(7)
 	public void testUpdatePlaceBaqRequest() {
-		seedOnePlace("place1", "state1");
 		var name = "";
 		var state = "";
 
@@ -108,12 +113,11 @@ class PlaceServiceApplicationTests {
 	}
 
 	@Test
+	@Order(8)
 	public void testUpdatePlaceOk() {
-		seedOnePlace("place1", "state1");
-
-		var name = "Valid Name";
-		var state = "Valid State";
-		var expectedSlug = "valid-name";
+		var name = "Valid Name Update";
+		var state = "Valid State Update";
+		var expectedSlug = "valid-name-update";
 
 		webTestClient
 			.put()
@@ -129,12 +133,24 @@ class PlaceServiceApplicationTests {
 			.jsonPath("updatedAt").isNotEmpty();
 	}
 
-	private void seedOnePlace(String name, String state) {
+	@Test
+	@Order(9)
+	public void testDeletePlaceBaqRequest() {
 		webTestClient
-			.post()
-			.uri("/places")
-			.bodyValue(new PlaceRequest(name, state))
-			.exchange();
+			.delete()
+			.uri("/places/10")
+			.exchange()
+			.expectStatus().isBadRequest();
+	}
+
+	@Test
+	@Order(10)
+	public void testDeletePlaceNoContent() {
+		webTestClient
+			.delete()
+			.uri("/places/1")
+			.exchange()
+			.expectStatus().isNoContent();
 	}
 
 }

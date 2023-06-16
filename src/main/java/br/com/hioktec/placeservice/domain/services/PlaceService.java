@@ -1,5 +1,6 @@
 package br.com.hioktec.placeservice.domain.services;
 
+import br.com.hioktec.placeservice.domain.exception.ResourceNotFoundException;
 import br.com.hioktec.placeservice.domain.model.Place;
 import br.com.hioktec.placeservice.domain.repositories.PlaceRepository;
 import com.github.slugify.Slugify;
@@ -37,6 +38,12 @@ public class PlaceService {
       .map(existPlace -> new Place(existPlace.id(), place.name(), slugify.slugify(place.name()), place.state(),
         existPlace.createdAt(), LocalDateTime.now()))
       .flatMap(placeRepository::save);
+  }
+
+  public Mono<Void> delete(Long id) {
+    return placeRepository.findById(id)
+      .switchIfEmpty(Mono.error(new ResourceNotFoundException("Place not found")))
+      .flatMap(placeRepository::delete);
   }
 
 }
