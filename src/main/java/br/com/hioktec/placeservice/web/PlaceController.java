@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,6 +37,12 @@ public class PlaceController {
   public ResponseEntity<Flux<PlaceResponse>> list() {
     var places = placeService.list().map(PlaceMapper::fromDomainModelToResponse);
     return ResponseEntity.ok(places);
+  }
+
+  @GetMapping("/{id}")
+  public Mono<ResponseEntity<PlaceResponse>> getById(@PathVariable Long id) {
+    var place = placeService.getById(id).map(PlaceMapper::fromDomainModelToResponse);
+    return place.map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
 }

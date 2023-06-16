@@ -60,6 +60,27 @@ class PlaceServiceApplicationTests {
 			.expectBodyList(PlaceResponse.class).hasSize(2);
 	}
 
+	@Test
+	public void testGetPlaceByIdNotFound() {
+		webTestClient
+			.get()
+			.uri("/places/10")
+			.exchange()
+			.expectStatus().isNotFound();
+	}
+
+	@Test
+	public void testGetPlaceByIdOk() {
+		seedOnePlace("place1", "state1");
+
+		webTestClient
+			.get()
+			.uri("/places/1")
+			.exchange()
+			.expectStatus().isOk()
+			.expectBody(PlaceResponse.class);
+	}
+
 	private void seedOnePlace(String name, String state) {
 		webTestClient
 			.post()
