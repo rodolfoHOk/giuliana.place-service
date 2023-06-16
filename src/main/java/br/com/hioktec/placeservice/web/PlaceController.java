@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,15 +35,22 @@ public class PlaceController {
   }
 
   @GetMapping
-  public ResponseEntity<Flux<PlaceResponse>> list() {
-    var places = placeService.list().map(PlaceMapper::fromDomainModelToResponse);
-    return ResponseEntity.ok(places);
+  public Flux<PlaceResponse> list() {
+    return placeService.list().map(PlaceMapper::fromDomainModelToResponse);
   }
 
   @GetMapping("/{id}")
   public Mono<ResponseEntity<PlaceResponse>> getById(@PathVariable Long id) {
-    var place = placeService.getById(id).map(PlaceMapper::fromDomainModelToResponse);
-    return place.map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
+    return placeService.getById(id)
+      .map(PlaceMapper::fromDomainModelToResponse)
+      .map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
+  }
+
+  @PutMapping("/{id}")
+  public Mono<ResponseEntity<PlaceResponse>> update(@PathVariable Long id, @Valid @RequestBody PlaceRequest requestBody) {
+    return placeService.update(id, PlaceMapper.fromRequestToDomainModel(requestBody))
+      .map(PlaceMapper::fromDomainModelToResponse)
+      .map(ResponseEntity::ok).defaultIfEmpty(ResponseEntity.notFound().build());
   }
 
 }

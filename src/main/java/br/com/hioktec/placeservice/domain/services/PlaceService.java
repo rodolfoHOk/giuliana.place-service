@@ -6,6 +6,8 @@ import com.github.slugify.Slugify;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.LocalDateTime;
+
 public class PlaceService {
 
   private final PlaceRepository placeRepository;
@@ -28,6 +30,13 @@ public class PlaceService {
 
   public Mono<Place> getById(Long id) {
     return placeRepository.findById(id);
+  }
+
+  public Mono<Place> update(Long id, Place place) {
+    return placeRepository.findById(id)
+      .map(existPlace -> new Place(existPlace.id(), place.name(), slugify.slugify(place.name()), place.state(),
+        existPlace.createdAt(), LocalDateTime.now()))
+      .flatMap(placeRepository::save);
   }
 
 }
